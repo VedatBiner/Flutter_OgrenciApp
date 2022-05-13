@@ -14,6 +14,13 @@ class MesajlarSayfasi extends StatefulWidget {
 class _MesajlarSayfasiState extends State<MesajlarSayfasi> {
 
   @override
+  void initState() {
+    // bu sayfaya gelindiğinde mesaj sayısı sıfırlanıyor.
+    widget.mesajlarRepository.yeniMesajSayisi = 0;
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -26,33 +33,12 @@ class _MesajlarSayfasiState extends State<MesajlarSayfasi> {
           Expanded(
             child: ListView.builder(
               reverse: true,
+              itemCount: widget.mesajlarRepository.mesajlar.length,
               itemBuilder: (context, index) {
-                bool benMiyim = Random().nextBool();
-                return Align(
-                  alignment: benMiyim ? Alignment.centerRight: Alignment.centerLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8.0,
-                      vertical: 16.0),
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.grey,
-                          width: 2
-                        ),
-                        color: Colors.orange.shade100,
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(15)
-                        ),
-                      ),
-                      child: const Padding(
-                        padding: EdgeInsets.all(24.0),
-                        child: Text(
-                          "Mesaj mesaj mesaj mesaj mesaj"
-                        ),
-                      ),
-                    ),
-                  ),
+                // Mesaj Gorunumu için ayrı widget yarattık
+                // item builder null dönünce son elemana gelmiş oluyoruz.
+                return MesajGorunumu(
+                  widget.mesajlarRepository.mesajlar[widget.mesajlarRepository.mesajlar.length - index -1],
                 );
               },
             ),
@@ -102,6 +88,43 @@ class _MesajlarSayfasiState extends State<MesajlarSayfasi> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class MesajGorunumu extends StatelessWidget {
+  final Mesaj mesaj;
+  const MesajGorunumu(this.mesaj, {
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: mesaj.gonderen == "Ali" ? Alignment.centerRight: Alignment.centerLeft,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 8.0,
+          vertical: 16.0),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.grey,
+              width: 2
+            ),
+            color: Colors.orange.shade100,
+            borderRadius: const BorderRadius.all(
+              Radius.circular(15)
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Text(
+              mesaj.yazi
+            ),
+          ),
+        ),
       ),
     );
   }

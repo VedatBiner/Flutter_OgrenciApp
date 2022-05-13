@@ -5,6 +5,8 @@ class MesajlarRepository{
     Mesaj("Evet", "Ayşe", DateTime.now().subtract(const Duration(minutes: 1))),
     Mesaj("Nasılsın?", "Ali", DateTime.now()),
   ];
+
+  int yeniMesajSayisi = 4;
 }
 
 class Mesaj{

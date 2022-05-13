@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../repository/ogretmenler_repository.dart';
 
 class OgretmenlerSayfasi extends StatefulWidget {
@@ -21,17 +20,17 @@ class _OgretmenlerSayfasiState extends State<OgretmenlerSayfasi> {
       ),
       body: Column(
           children: [
-            const PhysicalModel(
+            PhysicalModel(
               color: Colors.white,
               elevation: 10,
               child: Center(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(
+                  padding: const EdgeInsets.symmetric(
                     vertical: 32,
                     horizontal: 32,
                   ),
                   child: Text(
-                      " 10 Öğretmen"
+                    "${widget.ogretmenlerRepository.ogretmenler.length} Öğretmen"
                   ),
                 ),
               ),
@@ -39,16 +38,12 @@ class _OgretmenlerSayfasiState extends State<OgretmenlerSayfasi> {
 
             Expanded(
               child: ListView.separated(
-                itemBuilder: (context, index) => const ListTile(
-                  title: Text(
-                      "Ali"
-                  ),
-                  leading: Text(
-                      "🤵🏻‍♂️🤵🏻‍♀️"
-                  ),
+                itemBuilder: (context, index) => OgretmenSatiri(
+                  widget.ogretmenlerRepository.ogretmenler[index],
+                  widget.ogretmenlerRepository,
                 ),
                 separatorBuilder: (context, index) => const Divider(),
-                itemCount: 25,
+                itemCount: widget.ogretmenlerRepository.ogretmenler.length,
               ),
             ),
           ]
@@ -56,3 +51,32 @@ class _OgretmenlerSayfasiState extends State<OgretmenlerSayfasi> {
     );
   }
 }
+
+class OgretmenSatiri extends StatefulWidget {
+  final Ogretmen ogretmen;
+  final OgretmenlerRepository ogretmenlerRepository;
+  const OgretmenSatiri(this.ogretmen, this.ogretmenlerRepository, {
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<OgretmenSatiri> createState() => _OgretmenSatiriState();
+}
+
+class _OgretmenSatiriState extends State<OgretmenSatiri> {
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(
+          widget.ogretmen.ad + " " + widget.ogretmen.soyad),
+      leading: IntrinsicWidth(
+        child: Center(
+          child: Text(
+            widget.ogretmen.cinsiyet == "kadin" ? "🤵🏻‍♂" :"🤵🏻‍♀"
+          ),
+        ),
+      ),
+    );
+  }
+}
+
