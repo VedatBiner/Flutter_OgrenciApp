@@ -1,4 +1,8 @@
+// Öğrenci Uygulaması, ekran tasarımları
+// Riverpod kullanımı
+
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ogrenci_app/pages/mesajlar_sayfasi.dart';
 import 'package:ogrenci_app/pages/ogrenciler_sayfasi.dart';
 import 'package:ogrenci_app/pages/ogretmenler_sayfasi.dart';
@@ -7,7 +11,10 @@ import 'package:ogrenci_app/repository/ogrenciler_repository.dart';
 import 'package:ogrenci_app/repository/ogretmenler_repository.dart';
 
 void main() {
-  runApp(const OgrenciApp());
+  runApp(const ProviderScope(
+    child: OgrenciApp()
+    )
+  );
 }
 
 class OgrenciApp extends StatelessWidget {
@@ -26,26 +33,20 @@ class OgrenciApp extends StatelessWidget {
   }
 }
 
-class AnaSayfa extends StatefulWidget {
+class AnaSayfa extends ConsumerWidget {
   const AnaSayfa({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
   @override
-  State<AnaSayfa> createState() => _AnaSayfaState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
 
-class _AnaSayfaState extends State<AnaSayfa> {
+    final ogrencilerRepository =  ref.watch(ogrencilerProvider);
+    final ogretmenlerRepository =  ref.watch(ogretmenlerProvider);
 
-  MesajlarRepository mesajlarRepository = MesajlarRepository();
-  OgrencilerRepository ogrencilerRepository = OgrencilerRepository();
-  OgretmenlerRepository ogretmenlerRepository = OgretmenlerRepository();
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(title),
       ),
       body: Center(
         child: Column(
@@ -53,7 +54,7 @@ class _AnaSayfaState extends State<AnaSayfa> {
           children: [
             TextButton(
               child: Text(
-                "${mesajlarRepository.yeniMesajSayisi} yeni mesaj"
+                "${ref.watch(yeniMesajSayisiProvider)} yeni mesaj"
               ),
               onPressed: (){
                 _mesajlaraGit(context);
@@ -124,17 +125,17 @@ class _AnaSayfaState extends State<AnaSayfa> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context){
-          return OgrencilerSayfasi(ogrencilerRepository);
+          return const OgrencilerSayfasi();
         },
       )
     );
   }
 
-  void _ogretmenlereGit(context) {
+  void _ogretmenlereGit(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context){
-          return OgretmenlerSayfasi(ogretmenlerRepository);
+          return const OgretmenlerSayfasi();
         },
       )
     );
@@ -144,13 +145,10 @@ class _AnaSayfaState extends State<AnaSayfa> {
     await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context){
-          return MesajlarSayfasi(mesajlarRepository);
+          return const MesajlarSayfasi();
         },
       )
     );
-    setState(() {
-
-    });
   }
 
 }

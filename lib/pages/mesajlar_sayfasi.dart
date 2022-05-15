@@ -1,27 +1,30 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:ogrenci_app/repository/mesajlar_repository.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class MesajlarSayfasi extends StatefulWidget {
-  final MesajlarRepository mesajlarRepository;
-  const MesajlarSayfasi(this.mesajlarRepository, {Key? key}) : super(key: key);
+class MesajlarSayfasi extends ConsumerStatefulWidget {
+  const MesajlarSayfasi({Key? key}) : super(key: key);
 
   @override
   _MesajlarSayfasiState createState() => _MesajlarSayfasiState();
 }
 
-class _MesajlarSayfasiState extends State<MesajlarSayfasi> {
+class _MesajlarSayfasiState extends ConsumerState<MesajlarSayfasi> {
 
   @override
   void initState() {
+    // Eğer bir kırmızı ekran olursa aşağıdaki yöntemi kullanabiliriz.
+    Future.delayed(Duration.zero).then(
+      (value) => ref.read(yeniMesajSayisiProvider.notifier).sifirla()
+    );
     // bu sayfaya gelindiğinde mesaj sayısı sıfırlanıyor.
-    widget.mesajlarRepository.yeniMesajSayisi = 0;
+    // ref.read(yeniMesajSayisiProvider.notifier).sifirla();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    final mesajlarRepository = ref.watch(mesajlarProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -33,12 +36,12 @@ class _MesajlarSayfasiState extends State<MesajlarSayfasi> {
           Expanded(
             child: ListView.builder(
               reverse: true,
-              itemCount: widget.mesajlarRepository.mesajlar.length,
+              itemCount: mesajlarRepository.mesajlar.length,
               itemBuilder: (context, index) {
                 // Mesaj Gorunumu için ayrı widget yarattık
                 // item builder null dönünce son elemana gelmiş oluyoruz.
                 return MesajGorunumu(
-                  widget.mesajlarRepository.mesajlar[widget.mesajlarRepository.mesajlar.length - index -1],
+                  mesajlarRepository.mesajlar[mesajlarRepository.mesajlar.length - index -1],
                 );
               },
             ),
